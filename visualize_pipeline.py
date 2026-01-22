@@ -45,7 +45,7 @@ if __name__ == "__main__":
 
     # Step 3: Apply bilateral filter
     print("\nStep 3: Applying bilateral filter...")
-    filtered = apply_bilateral_filter(cropped_img, d=9, sigma_color=75, sigma_space=75)
+    filtered = apply_bilateral_filter(cropped_img, d=9, sigma_color=30, sigma_space=9)
     print(f"  Filtered shape: {filtered.shape}")
 
     # Step 4: Convert to LAB
@@ -60,7 +60,9 @@ if __name__ == "__main__":
 
     # Step 6: Crop sweet spot (remove black regions + edges)
     print("\nStep 6: Cropping sweet spot...")
-    lab_patch = crop_polar_sweet_spot(polar, inner_crop_pct=0.10, outer_crop_pct=0.10, debug=True)
+    lab_patch = crop_polar_sweet_spot(
+        polar, inner_crop_pct=0.10, outer_crop_pct=0.10, debug=True
+    )
 
     # Step 7: Compute 2D histogram
     print("\nStep 7: Computing 2D histogram (a* vs b*)...")
@@ -85,60 +87,63 @@ if __name__ == "__main__":
     # ============================================================
     # VISUALIZATION
     # ============================================================
-    print("\n" + "="*50)
+    print("\n" + "=" * 50)
     print("Generating visualization...")
-    print("="*50)
+    print("=" * 50)
 
     fig, axes = plt.subplots(3, 3, figsize=(14, 12))
 
     # Row 1: Original -> Cropped -> Filtered
     axes[0, 0].imshow(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
     axes[0, 0].set_title("1. Original Image")
-    axes[0, 0].axis('off')
+    axes[0, 0].axis("off")
 
     axes[0, 1].imshow(cv2.cvtColor(cropped_img, cv2.COLOR_BGR2RGB))
     axes[0, 1].set_title(f"2. Cropped (r={radius})")
-    axes[0, 1].axis('off')
+    axes[0, 1].axis("off")
 
     axes[0, 2].imshow(cv2.cvtColor(filtered, cv2.COLOR_BGR2RGB))
     axes[0, 2].set_title("3. Bilateral Filtered")
-    axes[0, 2].axis('off')
+    axes[0, 2].axis("off")
 
     # Row 2: LAB channels -> Polar -> Cropped patch
     # Show LAB as RGB for visualization (it won't look correct but shows the data)
-    axes[1, 0].imshow(lab[:, :, 0], cmap='gray')
+    axes[1, 0].imshow(lab[:, :, 0], cmap="gray")
     axes[1, 0].set_title("4. L* channel (Lightness)")
-    axes[1, 0].axis('off')
+    axes[1, 0].axis("off")
 
     # Convert polar LAB back to BGR for display
     polar_bgr = cv2.cvtColor(polar, cv2.COLOR_LAB2BGR)
     axes[1, 1].imshow(cv2.cvtColor(polar_bgr, cv2.COLOR_BGR2RGB))
     axes[1, 1].set_title("5. Polar Warped")
-    axes[1, 1].axis('off')
+    axes[1, 1].axis("off")
 
     # Convert cropped patch LAB back to BGR for display
     patch_bgr = cv2.cvtColor(lab_patch, cv2.COLOR_LAB2BGR)
     axes[1, 2].imshow(cv2.cvtColor(patch_bgr, cv2.COLOR_BGR2RGB))
     axes[1, 2].set_title("6. Sweet Spot (Final Patch)")
-    axes[1, 2].axis('off')
+    axes[1, 2].axis("off")
 
     # Row 3: a* channel, b* channel, 2D histogram
-    axes[2, 0].imshow(lab_patch[:, :, 1], cmap='RdYlGn_r')
+    axes[2, 0].imshow(lab_patch[:, :, 1], cmap="RdYlGn_r")
     axes[2, 0].set_title("7. a* channel (Green-Red)")
-    axes[2, 0].axis('off')
+    axes[2, 0].axis("off")
 
-    axes[2, 1].imshow(lab_patch[:, :, 2], cmap='YlGnBu_r')
+    axes[2, 1].imshow(lab_patch[:, :, 2], cmap="YlGnBu_r")
     axes[2, 1].set_title("8. b* channel (Blue-Yellow)")
-    axes[2, 1].axis('off')
+    axes[2, 1].axis("off")
 
     # 2D Histogram
-    im = axes[2, 2].imshow(hist_norm, cmap='hot', origin='lower', aspect='auto')
+    im = axes[2, 2].imshow(hist_norm, cmap="hot", origin="lower", aspect="auto")
     axes[2, 2].set_title(f"9. 2D Histogram (Entropy={entropy:.2f})")
     axes[2, 2].set_xlabel("b* bins")
     axes[2, 2].set_ylabel("a* bins")
     plt.colorbar(im, ax=axes[2, 2], fraction=0.046)
 
-    plt.suptitle(f"Pipeline Visualization | Mean L*: {mean_L:.1f} | Entropy: {entropy:.2f}", fontsize=14)
+    plt.suptitle(
+        f"Pipeline Visualization | Mean L*: {mean_L:.1f} | Entropy: {entropy:.2f}",
+        fontsize=14,
+    )
     plt.tight_layout()
     plt.show()
 

@@ -1,0 +1,23 @@
+{
+  "pattern_id": "CONE_CLASS_2",
+  "created": "2026-01-22T11:22:30.016223",
+  "sample_count": 10,
+  "histogram": "templates/class_2_hist.npy",
+  "entropy": 1.8213536024093628,
+  "mean_L": 36.789402785845496,
+  "bhatt_threshold": 0.2736,
+  "entropy_threshold": 0.3647,
+  "preprocess_params": {
+    "inner_crop_pct": 0.1,
+    "outer_crop_pct": 0.1,
+    "bilateral_d": 9,
+    "bilateral_sigma_color": 75,
+    "bilateral_sigma_space": 75
+  },
+  "calibration_stats": {
+    "bhatt_mean": 0.0515,
+    "bhatt_std": 0.0245,
+    "entropy_mean": 0.0442,
+    "entropy_std": 0.0366
+  }
+}
